@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Obter Email do Usuário Logado</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="userLinkContainer">Obtendo informações do usuário...</div>
+
+    <script type="text/javascript">
+        // Garantir que o SharePoint JSOM está carregado
+        ExecuteOrDelayUntilScriptLoaded(function() {
+            // URL para a API REST do SharePoint para obter o usuário atual
+            var apiUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/currentuser";
+
+            // Fazendo a chamada AJAX para obter os detalhes do usuário
+            $.ajax({
+                url: apiUrl,
+                method: "GET",
+                headers: {
+                    "Accept": "application/json; odata=verbose"
+                },
+                success: function(data) {
+                    // Obtendo o email do usuário logado
+                    var email = data.d.Email;
+
+                    // Construindo o link com o email do usuário
+                    var link = "https://yourcustomurl.com?email=" + encodeURIComponent(email);
+
+                    // Exibindo o link na página
+                    var linkHtml = '<a href="' + link + '" target="_blank">Clique aqui para abrir o link</a>';
+                    $('#userLinkContainer').html(linkHtml);
+                },
+                error: function(error) {
+                    console.error("Erro ao obter o email do usuário: ", error);
+                    $('#userLinkContainer').html("Erro ao obter o email do usuário.");
+                }
+            });
+        }, "sp.js");
+    </script>
+</body>
+</html>
